@@ -1,0 +1,206 @@
+#include<stdlib.h>
+#include<iostream>
+#include<fstream>
+#include<string.h>
+using namespace std;
+class student
+{
+	public: char name[10];
+	char usn[10];
+	char age[5];
+	char sem[5];
+	char branch[5];
+	char buffer[45];
+};
+fstream file;
+student s;
+
+void pack()
+{
+	int k,n;
+	printf("How many records: \n");
+	scanf("%d",&n);
+	for(k=0;k<n;k++)
+	{
+		cout<<"Enter name: ";
+		cin>>s.name;
+		cout<<"Enter usn: ";
+		cin>>s.usn;
+		cout<<"Enter age: ";
+		cin>>s.age;
+		cout<<"Enter sem: ";
+		cin>>s.sem;
+		cout<<"Enter branch: ";
+		cin>>s.branch;
+		strcpy(s.buffer, s.name);
+		strcat(s.buffer, "|");
+		strcat(s.buffer, s.usn);
+		strcat(s.buffer, "|");
+		strcat(s.buffer, s.age);
+		strcat(s.buffer, "|");
+		strcat(s.buffer, s.sem);
+		strcat(s.buffer, "|");
+		strcat(s.buffer, s.branch);
+		strcat(s.buffer, "\n");
+		file<<s.buffer;
+	}
+	file.close();
+}
+
+void writerecord()
+{
+	file.open("p3.txt", ios::out);
+	if(!file)
+	{
+		cout<<"\ncannot open the file in out mode";
+		exit(1);
+	}
+	pack();
+}
+
+void unpack()
+{
+	file.getline(s.name, 10,'|');
+	file.getline(s.usn, 10,'|');
+	file.getline(s.age, 5,'|');
+	file.getline(s.sem, 5,'|');
+	file.getline(s.branch, 5,'\n');
+}
+
+void search()
+{
+	char usn[10];
+	//char extra[45];
+	file.open("p3.txt", ios::in);
+	if(!file)
+	{
+		cout<<"\ncannot open the file in read mode";
+		exit(0);
+	}
+	cout<<"\nEnter the USN of record you want to search: ";
+	cin>>usn;
+	while(!file.eof())
+	{
+		unpack();
+		if(strcmp(s.usn, usn)==0)
+		{
+			cout<<"Record found";
+			cout<<"\n"<<s.name<<"\t\t"<<s.usn<<"\t\t"<<s.age<<"\t\t"<<s.sem<<"\t\t"<<s.branch;
+			file.close();
+			return;
+		}
+	}
+	cout<<"\nRecord not found";
+	file.close();
+}
+
+void displayFile()
+{
+	int i; 
+	file.open("p3.txt",ios::in);
+	if(!file)
+	{
+		cout<<"\nCannot open the file in read mode";
+		exit(1);
+	}
+	i=0;
+	cout<<"\n\nName\t\tUSN\t\tAge\t\tSem\t\tBranch\n";
+	cout<<"----\t\t---\t\t---\t\t---\t\t-----\n";
+	while(!file.eof())
+	{
+		unpack();
+		cout<<"\n"<<s.name<<"\t\t"<<s.usn<<"\t\t"<<s.age<<"\t\t"<<s.sem<<"\t\t"<<s.branch<<"\n";
+		i++;
+	}
+	file.close();
+}
+
+void modify()
+{
+	char usn[10];
+	int i,j;
+	student s[100];
+	file.open("p3.txt", ios::in);
+	if(!file)
+	{
+		cout<<"\nUnable to open the file in input mode";		
+		exit(1);
+	}
+	cout<<"\nEnter the usn of the record to be modified: ";
+	cin>>usn;
+	cout<<"\n";
+	i=0;
+	while(!file.eof())
+	{
+		file.getline(s[i].name, 10,'|');
+		file.getline(s[i].usn, 10,'|');
+		file.getline(s[i].age, 5,'|');
+		file.getline(s[i].sem, 5,'|');
+		file.getline(s[i].branch, 5,'\n');
+		i++;
+	}
+	i--;
+	for(j=0;j<i;j++)
+	{
+		if(strcmp(usn, s[j].usn)==0)
+		{
+			cout<<"\nThe old values of the record with Usn "<<usn<<" are: ";
+			cout<<"\nName\t\tUSN\t\tAge\t\tSem\t\tBranch\n";
+			cout<<"----\t\t---\t\t---\t\t---\t\t-----\n";
+			cout<<"\n"<<s[j].name<<"\t\t"<<s[j].usn<<"\t\t"<<s[j].age<<"\t\t"<<s[j].sem<<"\t\t"<<s[j].branch<<"\n";
+			cout<<"\nEnter the new value ";
+			cout<<"\nEnter name: ";
+			cin>>s[j].name;
+			cout<<"\nEnter usn: ";
+			cin>>s[j].usn;
+			cout<<"\nEnter age: ";
+			cin>>s[j].age;
+			cout<<"\nEnter sem: ";
+			cin>>s[j].sem;
+			cout<<"\nEnter branch: ";
+			cin>>s[j].branch; 
+			break;
+		}
+	}
+	if(j==i)
+	{
+		cout<<"\n The record with usn "<<usn<<" is not present";
+		return;
+	}
+	file.close();
+	file.open("p3.txt",ios::out);
+	if(!file)
+	{
+		cout<<"\nUnable to open the file in output mode";
+		return;
+	}
+	for(j=0; j<i; j++)
+	{
+		file<<s[j].name<<'|'<<s[j].usn<<'|'<<s[j].age<<'|'<<s[j].sem<<'|'<<s[j].branch<<'\n';
+	}
+	file.close();
+}
+int main()
+{
+	int choice;
+	while(1)
+	{
+		cout<<"\n0. Exit\n1.Write to file\n2.Display file\n3. Modify file\n4. Search\n\nEnter the choice: ";
+		cin>>choice;
+		switch(choice)
+		{
+			case 1: writerecord();
+				break;
+			case 2: displayFile();
+				break;
+			case 3: modify();
+				break;
+			case 4: search();
+				break;
+			case 0: exit(0);
+			default: cout<<"\nInvalid input";
+				break;
+		}
+	}
+	return 0;
+}

@@ -1,0 +1,87 @@
+#include<iostream>
+#include<fstream>
+#include<cstring>
+#include<stdlib.h>
+using namespace std;
+class student
+{
+	public: char name[10];
+}rec1[10],rec2[10];
+int n;
+void rev(char *s)
+{
+	int i, n=strlen(s)-1;
+	for(i=0;i<n;i++,n--)
+	{
+		char c=s[i];
+		s[i]=s[n];
+		s[n]=c;
+	}
+}
+void reads()
+{
+	int i; 
+	char name[10];
+	cout<<"Enter the no. of students: ";
+	cin>>n;
+	cout<<"Enter the student names: \n";
+	for(i=0;i<n;i++)
+		cin>>rec1[i].name;
+	cout<<"Reversed names: \n";
+	for(i=0;i<n;i++)
+	{
+		strcpy(name,rec1[i].name);
+		rev(name);
+		strcpy(rec2[i].name,name);
+		cout<<rec2[i].name<<"\n";
+	}
+}
+void write()
+{
+	fstream file;
+	char fname[10];
+	cout<<"Enter the file name: \n";
+	cin>>fname;
+	file.open(fname, ios::out);
+	if(!file)
+	{
+		cout<<"Could not open the file\n";
+		exit(1);
+	}
+	for(int i=0;i<n;i++)
+		file<<rec2[i].name<<"\n";
+}
+void stored_names()
+{
+	fstream f1,f2;
+	char fname1[10], fname2[10], name[10];
+	cout<<"Enter the file from where you want to read: \n";
+	cin>>fname1;
+	f1.open(fname1,ios::in);
+	if(!f1)
+	{
+		cout<<"Could not open the file";
+		exit(1);
+	}
+	cout<<"Enter the filename in which you want to store: \n";
+	cin>>fname2;
+	cout<<"Contents of "<<fname2<<"\n";
+	f2.open(fname2,ios::out);
+	while(!f1.eof())
+	{
+		f1.getline(name,10,'\n');
+		rev(name);
+		cout<<name<<"\n";
+		f2<<name<<"\n";
+	}
+	f1.close();
+	f2.close();
+}
+int main()
+{
+	reads();
+	write();
+	stored_names();
+	return 0;
+}
+

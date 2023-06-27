@@ -1,0 +1,125 @@
+#include<stdio.h>
+#include<iostream>
+#include<stdlib.h>
+#include<fstream>
+#include<cstring>
+using namespace std;
+class student{
+	public: char name[15], usn[15],age[5],sem[5],branch[15],buffer[100];
+};
+fstream file;
+student s;
+void pack()
+{
+	int k, n;
+	printf("How many records: ");
+	scanf("%d",&n);
+	for(k=0;k<n;k++)
+	{
+		cout<<"\nEnter name: ";
+		cin>>s.name;
+		cout<<"\nEnter usn: ";
+		cin>>s.usn;
+		cout<<"\nEnter age: ";
+		cin>>s.age;
+		cout<<"\nEnter sem: ";
+		cin>>s.sem;
+		cout<<"\nEnter branch: ";
+		cin>>s.branch;
+		file<<k<<"|"<<s.name<<"|"<<s.usn<<"|"<<s.age<<"|"<<s.sem<<"|"<<s.branch<<"\n";
+	}
+	file.close();
+}
+void writerecord()
+{
+	file.open("pg4.txt",ios::out);
+	if(!file)
+	{
+		cout<<"\nCant open file in out mode.";
+		//exit(0);
+	}
+	pack();
+}
+void displayfile()
+{
+	student s;
+	char rrn[10];
+	fstream file;
+	file.open("pg4.txt",ios::in);
+	if(!file)
+	{
+		cout<<"\nCannot open file";
+		exit(0);
+	}
+	cout<<"\n";
+	printf("rrn\tname\t\tusn\t\tage\t\tsem\t\tbranch\n");
+	while(!file.eof())
+	{
+		file.getline(rrn,4,'|');
+		file.getline(s.name, 15,'|');
+		file.getline(s.usn,15,'|');
+		file.getline(s.age,5,'|');
+		file.getline(s.sem,5,'|');
+		file.getline(s.branch,15,'\n');
+		printf("\n%s\t%s\t\t%s\t\t%s\t\t%s\t\t%s\n",rrn,s.name,s.usn,s.age,s.sem,s.branch);
+	}
+	file.close();
+}
+void search()
+{
+	char rrn[10], rrn1[10][15];
+	int i;
+	student s[100];
+	cout<<"\nenter rrn to be searched";
+	cin>>rrn;
+	fstream file;
+	file.open("pg4.txt",ios::in);
+	if(!file)
+	{
+		cout<<"Cant open file in input mode";
+		exit(0);
+	}
+	i=0;
+	printf("\nrrn\tname\t\tusn\t\tage\t\tsem\t\tbranch\n");
+	while(!file.eof())
+	{
+		file.getline(rrn1[i],4,'|');
+		file.getline(s[i].name,15,'|');
+		file.getline(s[i].usn,15,'|');
+		file.getline(s[i].age,5,'|');
+		file.getline(s[i].sem,5,'|');
+		file.getline(s[i].branch,15,'\n');
+		i++;
+	}
+	for(int j=0; j<i-1; j++)
+	{
+		if((strcmp(rrn,rrn1[j]))==0)
+		{
+			cout<<"\n"<<rrn<<"\t"<<s[j].name<<"\t"<<s[j].usn<<"\t"<<s[j].age<<"\t"<<s[j].sem<<"\t"<<s[j].branch<<"\n";
+			file.close();
+			return;
+		}
+	}
+	cout<<"\nRecord not found";
+	file.close();
+	return;
+}
+int main()
+{
+	int choice;
+	while(1)
+	{
+		cout<<"\n0.Exit\n1.Insert\n2.Search\n3.Display\nEnter choice: ";
+		cin>>choice;
+		switch(choice)
+		{
+			case 1: writerecord(); break;
+			case 2: search(); break;
+			case 3: displayfile(); break;
+			case 0: exit(0);
+			default: cout<<"\nInvalid input"; break;
+		}
+	}
+	return 0;
+}
+
